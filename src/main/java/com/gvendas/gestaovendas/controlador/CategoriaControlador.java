@@ -3,10 +3,16 @@ package com.gvendas.gestaovendas.controlador;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +33,20 @@ public class CategoriaControlador {
 	
 	@GetMapping("/{codigo}")
 	public ResponseEntity<Optional<Categoria>> buscarPorId(@PathVariable(name = "codigo") Long codigo){
-		Optional<Categoria> categoria = categoriaServico.buscarPorId(codigo);
+		Optional<Categoria> categoria = categoriaServico.buscarPorCodigo(codigo);
 		return categoria.isPresent() ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
 	}
+	
+	@PostMapping
+	public ResponseEntity<Categoria> salvar(@Valid @RequestBody Categoria categoria){
+		Categoria categoriaSalva = categoriaServico.salvar(categoria);
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
+	}
+	
+	@PutMapping("/{codigo}")
+	public ResponseEntity<Categoria> atualizar(@Valid @PathVariable Long codigo, @RequestBody Categoria categoria){
+		return ResponseEntity.ok(categoriaServico.atualizar(codigo, categoria));
+	}
+	
+	
 }
